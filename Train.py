@@ -47,7 +47,7 @@ def main():
 
     torch.backends.cudnn.enabled = True  # make sure to use cudnn for computational performance
 
-    train_folder = args.dataset_path + "/" + args.dataset_type + "/training/frames"
+    train_folder = "./fd_gt/Fall_gt"
 
     # Loading dataset
     train_dataset = DataLoader(train_folder, transforms.Compose([
