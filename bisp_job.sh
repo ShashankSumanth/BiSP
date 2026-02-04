@@ -23,6 +23,6 @@ echo "Python: $(which python)"
 nvidia-smi
 python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}'); print(f'GPU count: {torch.cuda.device_count()}')"
 # GPU-accelerated script
-python Train.py --batch-size 1 --epochs 10
+python Train.py --batch_size 1 --epochs 10
 
 echo "=== GPU Job Completed ==="
