@@ -44,58 +44,25 @@ class DataLoader(data.Dataset):
         self.sample = []
 
     def setup(self):
-        videos = glob.glob(os.path.join(self.dir, '*'))
-        # if self.train == True:
-        #     videos = random.sample(videos, 8)
-        #     self.sample = videos
-        # a =self.dir[:-6]
-        # b = os.path.join(self.dir[:-6], 'flow', '*')
-        # flow_videos = glob.glob(os.path.join(self.flow, '*'))
-        for idx, video in enumerate(sorted(videos)):
-            video_name = video.split('/')[-1].split('\\')[-1]
-            dataset_name = video.split('/')[2]  ## debug
-            format = '*.tif' if dataset_name == 'ped1' else '*.jpg'
-            self.videos[video_name] = {}
-            self.videos[video_name]['path'] = video
-            self.videos[video_name]['frame'] = glob.glob(os.path.join(video, format))
-            self.videos[video_name]['frame'].sort()
-            self.videos[video_name]['idx'] = idx
-            self.videos[video_name]['length'] = len(self.videos[video_name]['frame'])
+        npy_files = glob.glob(os.path.join(self.dir, "*.npy"))
+        npy_files.sort()
+
+        self.videos = OrderedDict()
+
+        for idx, file_path in enumerate(npy_files):
+            file_name = os.path.basename(file_path)
+
+            self.videos[file_name] = {}
+            self.videos[file_name]['path'] = file_path
+            self.videos[file_name]['idx'] = idx
+            self.videos[file_name]['length'] = 1  # one sample per file
+
 
 
     def get_all_samples(self):
-        frames = []
-        # flow = []
-        videos = glob.glob(os.path.join(self.dir, '*'))
-        # real_step = self._time_step+3 if self.train else self._time_step
-        # if self.train == True:
-        data_name = videos[0].split('/')[2]
-        #     videos = self.sample
-        for video in sorted(videos):
-            video_name = video.split('/')[-1].split('\\')[-1]
-            # if self.train:
-            #     if data_name != 'ped1':
-            #         for i in range(1, len(self.videos[video_name]['frame']) - self._time_step//2 - 1):
-            #             frames.append(self.videos[video_name]['frame'][i])
-            #     else:
-            #         for i in range(len(self.videos[video_name]['frame']) - self._time_step // 2 - 3):
-            #             frames.append(self.videos[video_name]['frame'][i])
-            # else:
-            #     if data_name != 'ped1':
-            #         for i in range(1, len(self.videos[video_name]['frame']) - self._time_step//2 - 2):
-            #             frames.append(self.videos[video_name]['frame'][i])
-            #     else:
-            #         for i in range(len(self.videos[video_name]['frame']) - self._time_step//2 - 3):
-            #             frames.append(self.videos[video_name]['frame'][i])
-            if self.train:
-                for i in range(1, len(self.videos[video_name]['frame']) - self._time_step//2 - 1):
-                    frames.append(self.videos[video_name]['frame'][i])
-            else:
-                for i in range(1, len(self.videos[video_name]['frame']) - self._time_step//2 - 2):
-                    frames.append(self.videos[video_name]['frame'][i])
-
-
-        return frames
+        npy_files = glob.glob(os.path.join(self.dir, "*.npy"))
+        npy_files.sort()
+        return npy_files
 
     def __getitem__(self, index):
         # a = self.samples[index].split('/')[-2]
